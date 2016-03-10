@@ -1,0 +1,10 @@
+.idea/
+.gradle/
+build/
+*.iml
+*.log
+*~
+.DS_Store
+target/
+test/
+UnitTest.java
