@@ -51,7 +51,7 @@ public class SharedDriver {
     }
 
     public void launchApp() {
-        if (!capabilities.isHardwareTypeARealIOSDevice() && !properties.getAutoLaunch()) {
+        if (!capabilities.isHardwareTypeRealIOSDevice() && !properties.getAutoLaunch()) {
             getDriver().launchApp();
         }
     }

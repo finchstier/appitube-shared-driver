@@ -27,7 +27,7 @@ public class UnitTest {
             e.printStackTrace();
         }
 
-        unitTest.doThis();
+        unitTest.runTest();
         unitTest.teardown();
     }
 
@@ -59,7 +59,14 @@ public class UnitTest {
         return elementFinder;
     }
 
-    private void doThis() {
+    private void runTest() {
+        selectAProduct();
+        login();
+        selectAnAddress();
+        checkout();
+    }
+
+    private void selectAProduct() {
         this.element = elementFinder.waitUntilVisibilityOfElementById(appPackage + "homepage_banner");
         elementFinder.click(element);
 
@@ -83,5 +90,35 @@ public class UnitTest {
 
         this.element = elementFinder.waitUntilVisibilityOfElementById(appPackage + "order_now_button");
         elementFinder.click(element);
+    }
+
+    private void login() {
+        if (elementFinder.isElementDisplayed(elementFinder.findElementById("login_sign_in_button"))) {
+            MobileElement usernameField = elementFinder.findElementById(appPackage + "login_email_edit_text");
+            elementFinder.sendKeys(usernameField, "vapiano@test.moonpig.com");
+
+            MobileElement passwordField = elementFinder.findElementById(appPackage + "login_password_edit_text");
+            elementFinder.sendKeys(passwordField, "Password1");
+
+            elementFinder.click(elementFinder.findElementById("login_sign_in_button"));
+        }
+    }
+
+    private void selectAnAddress() {
+        List<MobileElement> addresses = elementFinder.waitUntilVisibilityOfElementById(appPackage + "address_list_recycler_view")
+                .findElementsById(appPackage + "address_item_root");
+        if (addresses.size() > 0) {
+            elementFinder.click(addresses.get(0));
+        }
+    }
+
+    private void checkout() {
+        if(elementFinder.waitUntilInvisibilityOfElement(FindBy.CLASS_NAME, "android.widget.ProgressBar")) {
+            elementFinder.click(elementFinder.findElementById(appPackage + "pay_for_order"));
+        }
+    }
+
+    private void payment() {
+//        MobileElement cardNumber = elementFinder.findElementById(appPackage + "");
     }
 }

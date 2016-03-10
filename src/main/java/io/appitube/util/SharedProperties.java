@@ -70,10 +70,6 @@ public class SharedProperties {
         return validateProperty("hardware.type");
     }
 
-    public boolean getAutoLaunch() {
-        return Boolean.parseBoolean(validateProperty("auto.launch"));
-    }
-
     public int getDeviceTimeout() {
         return Integer.parseInt(validateProperty("device.timeout"));
     }
@@ -96,6 +92,14 @@ public class SharedProperties {
 
     public String getAppScriptDelayTimeout() {
         return validateProperty("delay.timeout");
+    }
+
+    public boolean getAutoAlert() {
+        return Boolean.parseBoolean(validateProperty("auto.alert"));
+    }
+
+    public boolean getAutoLaunch() {
+        return Boolean.parseBoolean(validateProperty("auto.launch"));
     }
 
     private String getProperty(String key) {

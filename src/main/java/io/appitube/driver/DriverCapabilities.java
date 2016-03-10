@@ -3,11 +3,14 @@ package io.appitube.driver;
 import io.appitube.util.SharedProperties;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
-import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.appium.java_client.remote.AndroidMobileCapabilityType.*;
+import static io.appium.java_client.remote.IOSMobileCapabilityType.*;
+import static io.appium.java_client.remote.MobileCapabilityType.*;
 
 public class DriverCapabilities {
 
@@ -29,8 +32,10 @@ public class DriverCapabilities {
     }
 
     public DesiredCapabilities getDesiredCapabilities() {
+        final String platform = properties.getPlatform();
+
         if (desiredCapabilities == null) {
-            switch (properties.getPlatform().toLowerCase()) {
+            switch (platform.toLowerCase()) {
                 case "ios":
                     desiredCapabilities = getIOSDesiredCapabilities();
                     break;
@@ -38,35 +43,34 @@ public class DriverCapabilities {
                     desiredCapabilities = getAndroidDesiredCapabilities();
                     break;
                 default:
-                    logger.error("{" + properties.getPlatform() + "} is not a valid capability.");
-                    throw new IllegalArgumentException("{" + properties.getPlatform() + "} is not a valid capability.");
+                    logger.error("{" + platform + "} is not a valid capability.");
+                    throw new IllegalArgumentException("{" + platform + "} is not a valid capability.");
             }
         }
         return desiredCapabilities;
     }
 
-    public boolean isHardwareTypeARealIOSDevice() {
-        return isHardwareTypeADevice() && properties.getPlatform().equalsIgnoreCase(MobilePlatform.IOS);
+    public boolean isHardwareTypeRealIOSDevice() {
+        return isHardwareTypeADevice() && isPlatformIOS();
+    }
+
+    private boolean isPlatformIOS() {
+        return properties.getPlatform().equalsIgnoreCase(MobilePlatform.IOS);
     }
 
     private DesiredCapabilities getAndroidDesiredCapabilities() {
         setDesiredCapabilities();
 
-        // See for possible values: http://appium.io/slate/en/master/?java#appium-server-capabilities
+        // List of Android-specific capabilities: https://github.com/appium/appium/blob/1.5/docs/en/writing-running-appium/caps.md#android-only
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, properties.getBundleId());
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, properties.getAppActivity());
 
         if (isHardwareTypeADevice()) {
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_DEVICE_READY_TIMEOUT, properties.getDeviceTimeout());
+            desiredCapabilities.setCapability(ANDROID_DEVICE_READY_TIMEOUT, properties.getDeviceTimeout());
         } else {
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.AVD_READY_TIMEOUT, properties.getLaunchTimeout());
-        }
-
-
-        if (!isHardwareTypeADevice()) {
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.AVD, properties.getDeviceName());
-        } else {
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID, properties.getDeviceId());
+            desiredCapabilities.setCapability(AVD, properties.getDeviceName());
+            desiredCapabilities.setCapability(AVD_LAUNCH_TIMEOUT, properties.getLaunchTimeout());
+            desiredCapabilities.setCapability(AVD_READY_TIMEOUT, properties.getLaunchTimeout());
         }
 
         System.out.println(printDesiredCapabilities(desiredCapabilities));
@@ -76,33 +80,36 @@ public class DriverCapabilities {
     private DesiredCapabilities getIOSDesiredCapabilities() {
         setDesiredCapabilities();
 
-        // See for possible values: http://appium.io/slate/en/master/?java#appium-server-capabilities
-        desiredCapabilities.setCapability(IOSMobileCapabilityType.BUNDLE_ID, properties.getBundleId());
+        // List of iOS-specific capabilities: https://github.com/appium/appium/blob/1.5/docs/en/writing-running-appium/caps.md#ios-only
+        desiredCapabilities.setCapability(BUNDLE_ID, properties.getBundleId());
+        desiredCapabilities.setCapability(AUTO_ACCEPT_ALERTS, properties.getAutoAlert());
         desiredCapabilities.setCapability(IOSMobileCapabilityType.LAUNCH_TIMEOUT, properties.getLaunchTimeout());
-        desiredCapabilities.setCapability(IOSMobileCapabilityType.WAIT_FOR_APP_SCRIPT, String.format("$.delay(%s);$.acceptAlert()", properties.getAppScriptDelayTimeout()));
-
-        if (isHardwareTypeADevice()) {
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID, properties.getDeviceId());
-        }
+        desiredCapabilities.setCapability(WAIT_FOR_APP_SCRIPT, String.format("$.delay(%s);$.acceptAlert()", properties.getAppScriptDelayTimeout()));
 
         System.out.println(printDesiredCapabilities(desiredCapabilities));
         return desiredCapabilities;
     }
 
     private void setDesiredCapabilities() {
+        final String buildNumber = System.getenv("BUILD_NUMBER");
+        final String user = System.getenv("USER");
         desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, properties.getPlatform());
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, properties.getPlatformVersion());
-        desiredCapabilities.setCapability("hardwareType", properties.getHardwareType());
-        desiredCapabilities.setCapability(MobileCapabilityType.APP, properties.getApp());
-        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, properties.getDeviceName());
-        desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET, properties.getNoReset());
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, properties.getDeviceTimeout());
-        desiredCapabilities.setCapability("name", "" + " - " + (System.getenv("BUILD_NUMBER") != null ? System.getenv("BUILD_NUMBER") : System.getenv("USER")));
-        desiredCapabilities.setCapability(MobileCapabilityType.FULL_RESET, properties.getFullReset());
 
-        desiredCapabilities.setCapability("autoLaunch",
-                isHardwareTypeARealIOSDevice() ? true : properties.getAutoLaunch());
+        // List of capabilities: https://github.com/appium/appium/blob/1.5/docs/en/writing-running-appium/caps.md#appium-server-capabilities
+        desiredCapabilities.setCapability(PLATFORM_NAME, properties.getPlatform());
+        desiredCapabilities.setCapability(PLATFORM_VERSION, properties.getPlatformVersion());
+        desiredCapabilities.setCapability(APP, properties.getApp());
+        desiredCapabilities.setCapability(FULL_RESET, properties.getFullReset());
+        desiredCapabilities.setCapability(NO_RESET, properties.getNoReset());
+        desiredCapabilities.setCapability(DEVICE_NAME, properties.getDeviceName());
+        desiredCapabilities.setCapability(NEW_COMMAND_TIMEOUT, properties.getDeviceTimeout());
+        desiredCapabilities.setCapability("autoLaunch", properties.getAutoLaunch());
+        desiredCapabilities.setCapability("hardwareType", properties.getHardwareType());
+        desiredCapabilities.setCapability("name", "" + " - " + (buildNumber != null ? buildNumber : user));
+
+        if (isHardwareTypeADevice()) {
+            desiredCapabilities.setCapability(UDID, properties.getDeviceId());
+        }
     }
 
     private boolean isHardwareTypeADevice() {
