@@ -8,3 +8,4 @@ build/
 target/
 test/
 UnitTest.java
+src/main/java/io/appitube/UnitTest.java
