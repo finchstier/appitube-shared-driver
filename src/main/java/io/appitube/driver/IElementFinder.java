@@ -11,6 +11,8 @@ public interface IElementFinder {
 
     boolean isElementSelected(MobileElement element);
 
+    boolean isElementChecked(FindBy findBy, String finder);
+
     boolean waitUntilInvisibilityOfElement(FindBy findBy, String finder);
 
     boolean waitUntilInvisibilityOfElementWithText(FindBy findBy, String finder, String text);

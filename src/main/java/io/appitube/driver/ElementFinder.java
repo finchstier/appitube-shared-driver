@@ -55,6 +55,7 @@ public class ElementFinder implements IElementFinder {
         return fluentWait().until(ExpectedConditions.elementToBeSelected(element));
     }
 
+    @Override
     public boolean isElementChecked(final FindBy findBy, final String finder) {
         return Boolean.parseBoolean(waitUntilVisibilityOfElement(findBy, finder).getAttribute("checked"));
     }
