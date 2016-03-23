@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    def SELENIUM_VERSION = '2.52.0'
+    def SELENIUM_VERSION = '2.53.0'
     def APPIUM_VERSION = '3.4.0'
     def LOGGER_VERSION = '1.7.18'
     def COMMONS_LANG3_VERSION = '3.4'
@@ -27,9 +27,9 @@ dependencies {
             'org.seleniumhq.selenium:selenium-support:' + SELENIUM_VERSION,
             'org.slf4j:slf4j-log4j12:' + LOGGER_VERSION,
             'org.apache.commons:commons-lang3:' + COMMONS_LANG3_VERSION,
-//    )
+    )
 
-//    testCompile (
+    testCompile (
             'junit:junit:4.12'
     )
 }
