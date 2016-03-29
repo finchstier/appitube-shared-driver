@@ -19,7 +19,6 @@ public class DriverServer {
 
     private AppiumDriverLocalService localService;
     private DriverCapabilities driverCapabilities;
-//    private DesiredCapabilities serverCapabilities;
     private final SharedProperties properties;
     private final String serverHost;
     private final String logLevel;
@@ -123,7 +122,6 @@ public class DriverServer {
                 .withAppiumJS(appiumJSFile)
                 .withIPAddress(serverHost)
                 .usingAnyFreePort()
-//                .withCapabilities(serverCapabilities)
                 .withArgument(GeneralServerFlag.LOG_LEVEL, logLevel)
                 .withLogFile(logFile)
                 .withStartUpTimeOut(30, TimeUnit.SECONDS));
@@ -140,8 +138,8 @@ public class DriverServer {
     private File getAppiumJSFile() {
         return new File(String.valueOf(SystemUtils.IS_OS_WINDOWS ?
                 SystemUtils.OS_ARCH.equalsIgnoreCase("x86") ?
-                        "C:/Program Files (x86)/Appium/node_modules/appium/bin/appium.js"
-                        : "C:/Program Files/Appium/node_modules/appium/bin/appium.js"
-                : "/usr/local/lib/node_modules/appium/bin/appium.js"));
+                        "C:/Program Files (x86)/Appium/node_modules/appium/lib/appium.js"
+                        : "C:/Program Files/Appium/node_modules/appium/lib/appium.js"
+                : "/usr/local/lib/node_modules/appium/lib/appium.js"));
     }
 }

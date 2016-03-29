@@ -37,7 +37,7 @@ public class ElementFinder implements IElementFinder {
                 .withTimeout(timeout, TimeUnit.SECONDS)
                 .pollingEvery(1, TimeUnit.SECONDS)
                 .ignoring(NoSuchElementException.class)
-                .ignoring(TimeoutException.class)
+                .ignoring(ElementNotVisibleException.class)
                 .ignoring(StaleElementReferenceException.class);
     }
 

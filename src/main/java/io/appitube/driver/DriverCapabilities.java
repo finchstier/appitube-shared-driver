@@ -101,19 +101,23 @@ public class DriverCapabilities {
         desiredCapabilities.setCapability(APP, properties.getApp());
         desiredCapabilities.setCapability(FULL_RESET, properties.getFullReset());
         desiredCapabilities.setCapability(NO_RESET, properties.getNoReset());
-        desiredCapabilities.setCapability(DEVICE_NAME, properties.getDeviceName());
         desiredCapabilities.setCapability(NEW_COMMAND_TIMEOUT, properties.getDeviceTimeout());
         desiredCapabilities.setCapability("autoLaunch", properties.getAutoLaunch());
-        desiredCapabilities.setCapability("hardwareType", properties.getHardwareType());
         desiredCapabilities.setCapability("name", "" + " - " + (buildNumber != null ? buildNumber : user));
 
         if (isHardwareTypeADevice()) {
             desiredCapabilities.setCapability(UDID, properties.getDeviceId());
+            desiredCapabilities.setCapability(DEVICE_NAME, properties.getDeviceId());
+        } else {
+            desiredCapabilities.setCapability(DEVICE_NAME, properties.getDeviceName());
         }
     }
 
     private boolean isHardwareTypeADevice() {
-        return properties.getHardwareType().equalsIgnoreCase("device");
+        if (properties.getDeviceId() != null) {
+            return true;
+        }
+        return false;
     }
 
     String printDesiredCapabilities(DesiredCapabilities desiredCapabilities) {

@@ -51,7 +51,7 @@ public class SharedProperties {
     }
 
     public String getDeviceName() {
-        return validateProperty("device.name");
+        return "device.name";
     }
 
     public String getApp() {
@@ -59,15 +59,11 @@ public class SharedProperties {
     }
 
     public String getBundleId() {
-        return validateProperty("bundle.id");
+        return "bundle.id";
     }
 
     public String getPlatformVersion() {
         return validateProperty("platform.version");
-    }
-
-    public String getHardwareType() {
-        return validateProperty("hardware.type");
     }
 
     public int getDeviceTimeout() {
